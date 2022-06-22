@@ -1,9 +1,12 @@
 using Cinemachine;
+using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody _rigidBody;
+    Rigidbody _rigidBody;
+
+    GameObject engineFX;
 
     [SerializeField] CinemachineVirtualCamera _playerFollowCamera;
     [SerializeField] GameObject gameBall;
@@ -19,14 +22,21 @@ public class PlayerController : MonoBehaviour
     float adjustRoll;
     float adjustYaw;
     bool isCameraViewBallFocused;
+    bool isAccelerating;
 
 
     // Start is called before the first frame update
     void Start()
     {
         _rigidBody = GetComponent<Rigidbody>();
-
-
+        foreach (Transform t in transform)
+        {
+            if(t.gameObject.name == "EngineFX")
+            {
+                engineFX = t.gameObject;
+            }
+        }
+        engineFX.SetActive(false);
     }
 
     // Update is called once per frame
@@ -41,7 +51,7 @@ public class PlayerController : MonoBehaviour
     {
         //Accelerate using physics when prompted by input.
         //Contain to a maximum directional speed.
-        if ((Vector3.Dot(_rigidBody.velocity, transform.forward) < topDirectionalSpeed) && Input.GetAxis("Accelerate") > 0.0f)
+        if ((Vector3.Dot(_rigidBody.velocity, transform.forward) < topDirectionalSpeed) && isAccelerating)
         {
             _rigidBody.AddForce(transform.forward * accelerationForce, ForceMode.Acceleration);
             Debug.Log("Reached top directional velocity.");
@@ -90,6 +100,36 @@ public class PlayerController : MonoBehaviour
     {
         //Input for adjusting pitch, yaw, and roll.
         GetPitchYawRollFromInput();
+
+        //Get Acceleration input
+        GetAccelerationInput();
+
+        //Handle Engine Visual FX
+        HandleEngineVisualFX();
+    }
+
+    void HandleEngineVisualFX()
+    {
+        if(isAccelerating)
+        {
+            engineFX.SetActive(true);
+        }
+        else
+        {
+            engineFX.SetActive(false);
+        }
+    }
+
+    void GetAccelerationInput()
+    {
+        if (Input.GetAxis("Accelerate") > 0.0f)
+        {
+            isAccelerating = true;
+        }
+        else
+        {
+            isAccelerating = false;
+        }
     }
 
     void LateUpdate()

@@ -1,10 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GoalBehavior : MonoBehaviour
 {
     [SerializeField] GameObject gameBall;
+    [SerializeField] GameManager gameManager;
+    [SerializeField] bool isBlueTeam;
 
     void OnTriggerEnter(Collider other)
     {
@@ -12,6 +12,8 @@ public class GoalBehavior : MonoBehaviour
         if(other.gameObject == gameBall.gameObject)
         {
             Debug.Log("Game ball has reached goal");
+            gameBall.SetActive(false);
+            gameManager.ScoreGoal(isBlueTeam);
         }
     }
 }

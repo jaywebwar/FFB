@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -6,9 +7,13 @@ public class GameManager : MonoBehaviour
 {
 
     [SerializeField] TextMeshProUGUI timerText;
+    [SerializeField] TextMeshProUGUI blueScoreText;
+    [SerializeField] TextMeshProUGUI redScoreText;
 
     int timerMinute = 5;
     int timerSecond = 0;
+    int blueScore = 0;
+    int redScore = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -30,7 +35,28 @@ public class GameManager : MonoBehaviour
             {
                 timerSecond--;
             }
-            timerText.text = timerMinute.ToString()+":"+timerSecond.ToString();
+            if(timerSecond < 10)
+            {
+                timerText.text = timerMinute.ToString() + ":0" + timerSecond.ToString();
+            }
+            else
+            {
+                timerText.text = timerMinute.ToString() + ":" + timerSecond.ToString();
+            }
+        }
+    }
+
+    internal void ScoreGoal(bool isBlueTeam)
+    {
+        if(isBlueTeam)
+        {
+            redScore++;
+            redScoreText.text = redScore.ToString();
+        }
+        else
+        {
+            blueScore++;
+            blueScoreText.text = blueScore.ToString();
         }
     }
 

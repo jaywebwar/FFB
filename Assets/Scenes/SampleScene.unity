@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 42eaf2c5dbb13dc498f15df5a5b05fda, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748171, a: 1}
+  m_IndirectSpecularColor: {r: 0.06639404, g: 0.15339953, b: 0.05805316, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -449,7 +449,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 466129412}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -564,7 +564,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 624896518}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -773,7 +773,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 808941997}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1267,7 +1267,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1434185215}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1616,7 +1616,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1812201777}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1731,7 +1731,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1872267670}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2006,11 +2006,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 995780319816659478, guid: ba7157dcb348b1341b7844b2c70e55d6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.0000012858092
+      value: -0.0000012858087
       objectReference: {fileID: 0}
     - target: {fileID: 995780319816659478, guid: ba7157dcb348b1341b7844b2c70e55d6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.043535687
+      value: 0.04353829
       objectReference: {fileID: 0}
     - target: {fileID: 995780319816659478, guid: ba7157dcb348b1341b7844b2c70e55d6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2022,15 +2022,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 995780319816659478, guid: ba7157dcb348b1341b7844b2c70e55d6, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.00036279744
+      value: 0.00036281912
       objectReference: {fileID: 0}
     - target: {fileID: 995780319816659478, guid: ba7157dcb348b1341b7844b2c70e55d6, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.00000001607262
+      value: 0.000000016072612
       objectReference: {fileID: 0}
     - target: {fileID: 995780319816659478, guid: ba7157dcb348b1341b7844b2c70e55d6, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 5.831106e-12
+      value: -5.8314508e-12
       objectReference: {fileID: 0}
     - target: {fileID: 995780319816659479, guid: ba7157dcb348b1341b7844b2c70e55d6, type: 3}
       propertyPath: m_LookAt

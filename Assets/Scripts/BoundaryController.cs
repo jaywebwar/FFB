@@ -9,15 +9,18 @@ public class BoundaryController : MonoBehaviour
     [SerializeField] GameObject [] rightWallFX;
     [SerializeField] GameObject [] backWallFX;
     [SerializeField] GameObject [] frontWallFX;
+    [SerializeField] GameObject [] ceilingFX;
     [SerializeField] List<GameObject> boundaryInteractablesList;
 
     [SerializeField] float boundarySensingDistance;
+    [SerializeField] float arenaSize = 100f;
 
     List<ParticleSystem> _floorParticleSystems = new List<ParticleSystem>();
     List<ParticleSystem> _leftWallParticleSystems = new List<ParticleSystem>();
     List<ParticleSystem> _rightWallParticleSystems = new List<ParticleSystem>();
     List<ParticleSystem> _backWallParticleSystems = new List<ParticleSystem>();
     List<ParticleSystem> _frontWallParticleSystems = new List<ParticleSystem>();
+    List<ParticleSystem> _ceilingParticleSystems = new List<ParticleSystem>();
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +33,7 @@ public class BoundaryController : MonoBehaviour
             _rightWallParticleSystems.Insert(i, rightWallFX[i].GetComponent<ParticleSystem>());
             _backWallParticleSystems.Insert(i, backWallFX[i].GetComponent<ParticleSystem>());
             _frontWallParticleSystems.Insert(i, frontWallFX[i].GetComponent<ParticleSystem>());
+            _ceilingParticleSystems.Insert(i, ceilingFX[i].GetComponent<ParticleSystem>());
         }
     }
 
@@ -56,7 +60,7 @@ public class BoundaryController : MonoBehaviour
             float translateZ = player.transform.position.z - floorFX[index].transform.position.z;
             float translateX = player.transform.position.x - floorFX[index].transform.position.x;
 
-            _floorParticleSystems[index].transform.position = new Vector3(floorFX[index].transform.position.x + translateX, -100, floorFX[index].transform.position.z + translateZ);
+            _floorParticleSystems[index].transform.position = new Vector3(floorFX[index].transform.position.x + translateX, -arenaSize, floorFX[index].transform.position.z + translateZ);
             var em = _floorParticleSystems[index].emission;
             em.enabled = true;
         }
@@ -73,7 +77,7 @@ public class BoundaryController : MonoBehaviour
             float translateX = player.transform.position.x - leftWallFX[index].transform.position.x;
             float translateY = player.transform.position.y - leftWallFX[index].transform.position.y;
 
-            _leftWallParticleSystems[index].transform.position = new Vector3(leftWallFX[index].transform.position.x + translateX, leftWallFX[index].transform.position.y + translateY, -100);
+            _leftWallParticleSystems[index].transform.position = new Vector3(leftWallFX[index].transform.position.x + translateX, leftWallFX[index].transform.position.y + translateY, -arenaSize);
             var em = _leftWallParticleSystems[index].emission;
             em.enabled = true;
         }
@@ -90,7 +94,7 @@ public class BoundaryController : MonoBehaviour
             float translateX = player.transform.position.x - rightWallFX[index].transform.position.x;
             float translateY = player.transform.position.y - rightWallFX[index].transform.position.y;
 
-            _rightWallParticleSystems[index].transform.position = new Vector3(rightWallFX[index].transform.position.x + translateX, rightWallFX[index].transform.position.y + translateY, 100);
+            _rightWallParticleSystems[index].transform.position = new Vector3(rightWallFX[index].transform.position.x + translateX, rightWallFX[index].transform.position.y + translateY, arenaSize);
             var em = _rightWallParticleSystems[index].emission;
             em.enabled = true;
         }
@@ -107,7 +111,7 @@ public class BoundaryController : MonoBehaviour
             float translateZ = player.transform.position.z - backWallFX[index].transform.position.z;
             float translateY = player.transform.position.y - backWallFX[index].transform.position.y;
 
-            _backWallParticleSystems[index].transform.position = new Vector3(-100, backWallFX[index].transform.position.y + translateY, backWallFX[index].transform.position.z + translateZ);
+            _backWallParticleSystems[index].transform.position = new Vector3(-arenaSize, backWallFX[index].transform.position.y + translateY, backWallFX[index].transform.position.z + translateZ);
             var em = _backWallParticleSystems[index].emission;
             em.enabled = true;
         }
@@ -124,13 +128,30 @@ public class BoundaryController : MonoBehaviour
             float translateZ = player.transform.position.z - frontWallFX[index].transform.position.z;
             float translateY = player.transform.position.y - frontWallFX[index].transform.position.y;
 
-            _frontWallParticleSystems[index].transform.position = new Vector3(100, frontWallFX[index].transform.position.y + translateY, frontWallFX[index].transform.position.z + translateZ);
+            _frontWallParticleSystems[index].transform.position = new Vector3(arenaSize, frontWallFX[index].transform.position.y + translateY, frontWallFX[index].transform.position.z + translateZ);
             var em = _frontWallParticleSystems[index].emission;
             em.enabled = true;
         }
         else
         {
             var em = _frontWallParticleSystems[index].emission;
+            em.enabled = false;
+        }
+
+        //ceiling particle effects
+        if(player.transform.position.y > ceilingFX[index].transform.position.y - boundarySensingDistance)
+        {
+            Debug.Log("Near the ceiling");
+            float translateX = player.transform.position.x - ceilingFX[index].transform.position.x;
+            float translateZ = player.transform.position.z - ceilingFX[index].transform.position.z;
+
+            _ceilingParticleSystems[index].transform.position = new Vector3(ceilingFX[index].transform.position.x + translateX, arenaSize, ceilingFX[index].transform.position.z + translateZ);
+            var em = _ceilingParticleSystems[index].emission;
+            em.enabled = true;
+        }
+        else
+        {
+            var em = _ceilingParticleSystems[index].emission;
             em.enabled = false;
         }
     }

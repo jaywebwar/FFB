@@ -122,7 +122,7 @@ public class PlayerController : MonoBehaviour
 
     void GetAccelerationInput()
     {
-        if (Input.GetAxis("Accelerate") > 0.0f)
+        if (Input.GetAxis("Accelerate") > 0.0f || Input.GetButton("Accelerate"))
         {
             isAccelerating = true;
         }

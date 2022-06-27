@@ -6,23 +6,34 @@ public class PlayerController : MonoBehaviour
 {
     Rigidbody _rigidBody;
 
-    GameObject engineFX;
+    GameObject _engineFX;
 
+    [Header("Referenced Game Objects")]
     [SerializeField] CinemachineVirtualCamera _playerFollowCamera;
-    [SerializeField] GameObject gameBall;
 
+    [Header("Vehicle Controls")]
     [SerializeField] float accelerationForce;
     [SerializeField] float topDirectionalSpeed;
     [SerializeField] float maxRotationalSpeed;
     [SerializeField] float accelerationTorque;
     [SerializeField] float torqueEndSmoothness;
-    
 
-    float adjustPitch;
-    float adjustRoll;
-    float adjustYaw;
+
+    float adjustVehiclePitch;
+    float adjustVehicleRoll;
+    float adjustVehicleYaw;
     bool isCameraViewBallFocused;
     bool isAccelerating;
+    float threshold = 0.01f;
+    float cameraYaw = 0f;
+    float cameraPitch = 0f;
+
+    [Header("Camera Controls")]
+    [SerializeField] GameObject CinemachineCameraTarget;
+    [SerializeField] float YawBottomClamp = -90f;
+    [SerializeField] float YawTopClamp = 90f;
+    [SerializeField] float PitchBottomClamp = -90f;
+    [SerializeField] float PitchTopClamp = 90f;
 
 
     // Start is called before the first frame update
@@ -31,12 +42,12 @@ public class PlayerController : MonoBehaviour
         _rigidBody = GetComponent<Rigidbody>();
         foreach (Transform t in transform)
         {
-            if(t.gameObject.name == "EngineFX")
+            if (t.gameObject.name == "EngineFX")
             {
-                engineFX = t.gameObject;
+                _engineFX = t.gameObject;
             }
         }
-        engineFX.SetActive(false);
+        _engineFX.SetActive(false);
     }
 
     // Update is called once per frame
@@ -54,41 +65,27 @@ public class PlayerController : MonoBehaviour
         if ((Vector3.Dot(_rigidBody.velocity, transform.forward) < topDirectionalSpeed) && isAccelerating)
         {
             _rigidBody.AddForce(transform.forward * accelerationForce, ForceMode.Acceleration);
-            Debug.Log("Reached top directional velocity.");
         }
         else if (Input.GetButton("Accelerate"))
         {
             Vector3 currentDirectionalSpeed = Vector3.Dot(_rigidBody.velocity, transform.forward) * transform.forward;
             Vector3 currentNonDirectionalSpeed = _rigidBody.velocity - currentDirectionalSpeed;
             _rigidBody.velocity = currentNonDirectionalSpeed + transform.forward * topDirectionalSpeed;
-            Debug.Log("Accelerate.");
-        }
-        else
-        {
-            Debug.Log("No longer accelerating.");
         }
     }
 
     void AdjustPitchYawRollFromInput()
     {
         //Adjust Pitch, Yaw, Roll using physics
-        if (adjustYaw == 0.0f && adjustPitch == 0.0f && adjustRoll == 0.0f)
+        if (adjustVehicleYaw == 0f && adjustVehiclePitch == 0f && adjustVehicleRoll == 0f)
         {
             _rigidBody.angularVelocity = Vector3.Lerp(_rigidBody.angularVelocity, Vector3.zero, torqueEndSmoothness);
         }
         else if (_rigidBody.angularVelocity.magnitude < maxRotationalSpeed)
         {
-            Vector3 adjustVector = new Vector3(adjustPitch, adjustYaw, adjustRoll);
-
-
-            Debug.DrawRay(transform.position, transform.forward * 10, Color.yellow);
-            Debug.DrawRay(transform.position, transform.right * 10, Color.green);
-            Debug.DrawRay(transform.position, transform.up * 10, Color.red);
-
-
-            _rigidBody.AddTorque((transform.right * adjustPitch) * accelerationTorque, ForceMode.Acceleration);
-            _rigidBody.AddTorque((transform.up * adjustYaw) * accelerationTorque, ForceMode.Acceleration);
-            _rigidBody.AddTorque((transform.forward * -adjustRoll) * accelerationTorque, ForceMode.Acceleration);
+            _rigidBody.AddTorque((transform.right * adjustVehiclePitch) * accelerationTorque, ForceMode.Acceleration);
+            _rigidBody.AddTorque((transform.up * adjustVehicleYaw) * accelerationTorque, ForceMode.Acceleration);
+            _rigidBody.AddTorque((transform.forward * -adjustVehicleRoll) * accelerationTorque, ForceMode.Acceleration);
         }
         else
         {
@@ -108,21 +105,23 @@ public class PlayerController : MonoBehaviour
         HandleEngineVisualFX();
     }
 
+
+
     void HandleEngineVisualFX()
     {
-        if(isAccelerating)
+        if (isAccelerating)
         {
-            engineFX.SetActive(true);
+            _engineFX.SetActive(true);
         }
         else
         {
-            engineFX.SetActive(false);
+            _engineFX.SetActive(false);
         }
     }
 
     void GetAccelerationInput()
     {
-        if (Input.GetAxis("Accelerate") > 0.0f || Input.GetButton("Accelerate"))
+        if (Input.GetAxis("Accelerate") > 0f || Input.GetButton("Accelerate"))
         {
             isAccelerating = true;
         }
@@ -132,10 +131,37 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void GetPitchYawRollFromInput()
+    {
+        //Input for adjusting pitch
+        adjustVehiclePitch = Input.GetAxis("Vertical");
+
+        //Input for adjusting yaw and roll
+        if (Input.GetButton("RollButton"))
+        {
+            adjustVehicleRoll = Input.GetAxis("Horizontal");
+            adjustVehicleYaw = 0f;
+        }
+        else
+        {
+            adjustVehicleYaw = Input.GetAxis("Horizontal");
+            adjustVehicleRoll = 0f;
+        }
+    }
+
     void LateUpdate()
     {
         //Input for switching camera focus
         SwitchCamera();
+
+        //Handles Camera rotation from input
+        //CameraRotation();
+        TrackCameraBehindShip();
+    }
+
+    void TrackCameraBehindShip()
+    {
+        CinemachineCameraTarget.transform.rotation = _rigidBody.transform.rotation;
     }
 
     void SwitchCamera()
@@ -147,7 +173,6 @@ public class PlayerController : MonoBehaviour
                 //TODO
                 //switch camera to out in front
                 _playerFollowCamera.gameObject.SetActive(true);
-                Debug.Log("Camera not focused on ball");
                 isCameraViewBallFocused = false;
             }
             else
@@ -155,27 +180,70 @@ public class PlayerController : MonoBehaviour
                 //TODO
                 //switch camera to focus ball
                 _playerFollowCamera.gameObject.SetActive(false);
-                Debug.Log("Camera focused on ball");
                 isCameraViewBallFocused = true;
             }
         }
     }
 
-    void GetPitchYawRollFromInput()
+    void CameraRotation()
     {
-        //Input for adjusting pitch
-        adjustPitch = Input.GetAxis("Vertical");
+        MouseCameraRotation();
+        //JoystickCameraRotation();
 
-        //Input for adjusting yaw and roll
-        if (Input.GetButton("RollButton"))
+        // clamp our rotations so our values are limited 360 degrees
+        cameraYaw = ClampAngle(cameraYaw, YawBottomClamp, YawTopClamp);
+        cameraPitch = ClampAngle(cameraPitch, PitchBottomClamp, PitchTopClamp);
+
+        Debug.Log("CameraTarget Rotation: X = "+ CinemachineCameraTarget.transform.rotation.x+" Y = "+ CinemachineCameraTarget.transform.rotation.y);
+        Debug.Log("Player Object Rotation: X = "+ transform.rotation.x+" Y = "+ transform.rotation.y);
+        Debug.Log("Rigidbody Rotation: X = "+ _rigidBody.transform.rotation.x+" Y = "+ _rigidBody.transform.rotation.y);
+
+        // Cinemachine will follow this target
+        CinemachineCameraTarget.transform.rotation = Quaternion.Euler(cameraPitch, cameraYaw, 0f);
+    }
+
+    void MouseCameraRotation()
+    {
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+        if (mouseX >= threshold || mouseX <= -threshold)
         {
-            adjustRoll = Input.GetAxis("Horizontal");
-            adjustYaw = 0.0f;
+            cameraYaw += mouseX;
         }
-        else
+        if (mouseY >= threshold || mouseY <= -threshold)
         {
-            adjustYaw = Input.GetAxis("Horizontal");
-            adjustRoll = 0.0f;
+            cameraPitch = mouseY;
         }
+    }
+
+    void JoystickCameraRotation()
+    {
+        float joystickX = Input.GetAxis("Right Joystick X");
+        float joystickY = Input.GetAxis("Right Joystick Y");
+
+        if (joystickX >= threshold || joystickX <= -threshold)
+        {
+            cameraYaw += joystickX;
+        }
+
+        if (joystickY >= threshold || joystickY <= -threshold)
+        {
+            cameraPitch += joystickY;
+        }
+    }
+
+    float ClampAngle(float angle, float min, float max)
+    {
+        //prevents getting stuck on a max magnitude float
+        if (angle < -360f)
+        {
+            angle += 360f;
+        }
+        if (angle > 360f)
+        {
+            angle -= 360f;
+        }
+
+        return Mathf.Clamp(angle, min, max);
     }
 }
